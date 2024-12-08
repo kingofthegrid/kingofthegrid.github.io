@@ -1,3 +1,5 @@
+const BOTS_CONTENTS = "https://api.github.com/repos/kingofthegrid/bots/contents/bots";
+
 var KOTG = {
     print: function (e) {
         $('#systme-log').append(e + '</br>')
@@ -158,11 +160,10 @@ $(function ()
     });
 
     $.ajax({
-        url: "bots/list.txt",
+        url: BOTS_CONTENTS,
         method: "GET",
-        success: function (data) {
-            const options = data.split("\n").map(item => item.trim()).filter(item => item);
-
+        success: function(data)
+        {
             const select_a = $("#bot-a-select");
             const select_b = $("#bot-b-select");
             select_a.empty();
@@ -171,17 +172,16 @@ $(function ()
             select_a.append(`<option selected>Or select Existing</option>`);
             select_b.append(`<option selected>Or select Existing</option>`);
 
-            options.forEach(option => {
-                select_a.append(`<option value="${option}">${option}</option>`);
-                select_b.append(`<option value="${option}">${option}</option>`);
+            data.forEach(function(item) {
+                select_a.append(`<option value="${item.name}" data-url="${item.download_url}">${item.name}</option>`);
+                select_b.append(`<option value="${item.name}" data-url="${item.download_url}">${item.name}</option>`);
             });
-
 
             $('#bot-a-select').on('change', function (event) {
                 const bot_name = $('#bot-a-select').val();
 
                 $.ajax({
-                    url: "bots/" + bot_name,
+                    url: $('#bot-a-select option:selected').data('url'),
                     method: "GET",
                     xhrFields: {
                         responseType: "blob"
@@ -210,7 +210,7 @@ $(function ()
                 const bot_name = $('#bot-b-select').val();
 
                 $.ajax({
-                    url: "bots/" + bot_name,
+                    url: $('#bot-a-select option:selected').data('url'),
                     method: "GET",
                     xhrFields: {
                         responseType: "blob"
@@ -234,10 +234,10 @@ $(function ()
                     }
                 });
             });
-
         },
-        error: function () {
-            alert("Failed to load file. Please check the file URL.");
+        error: function(xhr, status, error)
+        {
+            console.error("Error:", error);
         }
     });
 });
