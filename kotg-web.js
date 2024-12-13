@@ -210,7 +210,7 @@ $(function ()
                 const bot_name = $('#bot-b-select').val();
 
                 $.ajax({
-                    url: $('#bot-a-select option:selected').data('url'),
+                    url: $('#bot-b-select option:selected').data('url'),
                     method: "GET",
                     xhrFields: {
                         responseType: "blob"
