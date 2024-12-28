@@ -66,7 +66,7 @@ function check_trigger_game()
         const outputData = FS.readFile("/recording.txt");
 
         var decoder = new TextDecoder('utf8');
-        var b64encoded = btoa(decoder.decode(outputData));
+        var b64encoded = btoa(unescape(encodeURIComponent(decoder.decode(outputData))));
 
         const recordingDataUri = `data:application/json;base64,${b64encoded}`;
 
