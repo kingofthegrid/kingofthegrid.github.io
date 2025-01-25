@@ -3,17 +3,53 @@ const floopyData = new Uint8Array(1474560);
 
 var booted_up = false;
 
+function program_built()
+{
+    $('#play-button').show();
+    $('#download-button').show();
+}
+
 function update_status(status)
 {
     $('.vm-status').hide();
     $('#status-' + status).show();
+
+    if (status === "ok")
+    {
+        program_built();
+    }
+    if (status === "progress")
+    {
+        $('#build-button').hide();
+    }
+    else
+    {
+        $('#build-button').show();
+    }
+}
+
+async function open_tab_await(url) {
+    return new Promise((resolve, reject) => {
+        const newTab = window.open(url, '_blank');
+
+        if (!newTab) {
+            reject(new Error('Failed to open a new tab. Make sure pop-ups are allowed.'));
+            return;
+        }
+
+        // Wait for the new tab to load
+        newTab.onload = () => {
+            console.log('New tab loaded!');
+            resolve(newTab); // Resolve the Promise with the tab reference
+        };
+    });
 }
 
 function load_emulator()
 {
     var emulator = new V86({
         wasm_path: "v86/v86.wasm",
-        memory_size: 128 * 1024 * 1024,
+        memory_size: 256 * 1024 * 1024,
         screen_container: document.getElementById("screen_container"),
         bios: { url: "v86/bios/seabios.bin" },
         vga_bios: { url: "v86/bios/vgabios.bin" },
@@ -107,8 +143,8 @@ $(function()
                 '#include <stdio.h>',
                 '#include "bot_api.h"',
                 'int main() {',
-                '    bot_move_down();',
                 '    printf("Hello, World!\\n");',
+                '    bot_move_down();',
                 '    return 0;',
                 '}'
             ].join('\n'), // Preloaded C code
@@ -179,6 +215,22 @@ $(function()
         }
 
         await emulator.serial0_send('/bin/sh /work/build.sh\n');
+    });
+
+    $('#play-button').click(async () => {
+        const result = await emulator.read_file('/build.bin');
+        const runTab = await open_tab_await('../run.html');
+        runTab.postMessage(result, window.location.origin);
+    });
+
+    $('#download-button').click(async () => {
+        const result = await emulator.read_file('/build.bin');
+
+        var a = document.createElement("a");
+        a.download = "devbot.bin";
+        a.href = window.URL.createObjectURL(new Blob([result]));
+        a.dataset.downloadurl = "application/octet-stream:" + a.download + ":" + a.href;
+        a.click();
     });
 
     document.getElementById("save_file").onclick = async function()

@@ -241,3 +241,19 @@ $(function ()
         }
     });
 });
+
+window.addEventListener('message', (event) => {
+    console.log('Received program data:', event.data);
+
+    const reader = new FileReader();
+
+    reader.onload = function (event) {
+        if (load_file(reader, "devbot", $('#bot-a-file-name'), $('#bot-a-selected')))
+        {
+            bot_a_name = "devbot";
+            bot_a_selected = true;
+            check_trigger_game();
+        }
+    };
+    reader.readAsArrayBuffer(new Blob([event.data]));
+});
