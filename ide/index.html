@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>King Of The Grid Leaderboard</title>
+    <link rel="stylesheet" href="/bootstrap.min.css">
+    <link rel="stylesheet" href="/bootstrap-icons.min.css">
+    <script src="/jquery-3.7.1.min.js"></script>
+    <script src="/bootstrap.bundle.min.js"></script>
+
+    <script src="v86/libv86.js"></script>
+    <script src="vs/loader.js"></script>
+    <script src="tools.js"></script>
+
+    <style>
+        /* Style for the editor container */
+        #editor-container {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        #terminal {
+            height: 300px;
+        }
+
+        .highlight-bash {
+            border: 0 !important;
+            margin: 1px auto 24px auto !important;
+        }
+
+        .highlight-bash > .highlight::before {
+            display: block;
+            box-sizing: border-box;
+            height: 25px;
+            margin: 0 auto;
+            border-top-right-radius: 5px;
+            border-top-left-radius: 5px;
+            width: 100%;
+            background: #bbb url("images/window-buttons.png") no-repeat 6px 6px;
+            background-size: 59px 14px;
+            content: "";
+        }
+
+        .highlight-bash > .highlight {
+            border: none !important;
+            background: none !important;
+        }
+
+        .highlight-bash > .highlight > pre {
+            background-color: #151515 !important;
+            color: #9CD9F0 !important;
+            box-sizing: border-box;
+            padding: 10px;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        .highlight-bash > .highlight > pre > span {
+            color: #9CD9F0 !important;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="d-flex flex-column vh-100">
+        <!-- Editor Container -->
+        <div class="flex-grow-1 m-3">
+            <!-- Your editor content here -->
+            <div id="editor-container"></div>
+        </div>
+
+        <!-- Terminal Window -->
+        <div style="height: 400px;">
+            <!-- Your terminal content here -->
+            <!-- Tabs Navigation -->
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="pl-3" id="build-tools" style="display: none;">
+                    <button type="button" class="btn btn-outline-success" id="build-button"><i class="bi bi-hammer mr-1"></i> Compile</button>
+                </li>
+                <li class="pl-3 nav-item">
+                    <a class="nav-link active" id="output-tab" data-toggle="tab" href="#output" role="tab" aria-controls="output" aria-selected="true"><i class="bi bi-chat-left-text mr-1"></i> Build Output</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="command-tab" data-toggle="tab" href="#command" role="tab" aria-controls="command" aria-selected="false"><i class="bi bi-terminal mr-1"></i> Linux Terminal</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="tools-tab" data-toggle="tab" href="#tools" role="tab" aria-controls="tools" aria-selected="false"><i class="bi bi-wrench-adjustable mr-1"></i> Tools</a>
+                </li>
+                <li class="d-flex">
+                    <span id="status-error" class="vm-status text-danger m-2" style="display: none;"><i class="bi bi-x-circle mr-1"></i> Compilation failed!</span>
+                    <span id="status-ok" class="vm-status text-success m-2" style="display: none;"><i class="bi bi-check mr-1"></i> Compiled</span>
+                    <span id="status-progress" class="vm-status text-light m-2" style="display: none;"><i class="bi bi-info-lg mr-1"></i> Compiling...</span>
+                </li>
+            </ul>
+
+            <!-- Tabs Content -->
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="output" role="tabpanel" aria-labelledby="output-tab">
+                    <div class="m-3">
+                        <div id="boot-disclaimer">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <span class="spinner-border" role="status">
+                                    <span class="sr-only"></span>
+                                </span>
+                                    <span class="text-warning ml-3">
+                                    Linux Apline is spinning up, shouldn't take more than 5 seconds.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="highlight-bash notranslate" style="display: none;" id="terminal-window">
+                            <div class="highlight mt-3">
+                                <pre id="terminal"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="command" role="tabpanel" aria-labelledby="command-tab">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <!-- A minimal structure for the ScreenAdapter defined in browser/screen.js -->
+                        <div id="screen_container" style="padding-top: 4px;">
+                            <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
+                            <canvas style="display: none"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="tools" role="tabpanel" aria-labelledby="tools-tab">
+                    <div class="p-3">
+                        <input id="save_file" class="btn btn-outline-success" type="button" value="Save state to file">
+                        <br/><br/>
+                        Restore State from file:<br/><input id="restore_file" type="file">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
