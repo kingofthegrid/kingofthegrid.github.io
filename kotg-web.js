@@ -86,7 +86,7 @@ function check_trigger_game()
     }
 }
 
-function load_file(reader, file_name, select_node, label_node)
+function load_file(reader, file_name, select_node, label_node, card_node, custom_note)
 {
     const data = new Uint8Array(reader.result);
 
@@ -107,8 +107,14 @@ function load_file(reader, file_name, select_node, label_node)
     }
 
     select_node.text('Loaded <' + file_name + '>');
+    card_node.addClass('border-success');
 
-    label_node.html('<i class="bi bi-check-circle-fill"></i> Selected!').addClass('text-success');
+    if (!custom_note)
+    {
+        custom_note = 'Selected!';
+    }
+
+    label_node.html('<i class="bi bi-check-circle-fill"></i> ' + custom_note).addClass('text-success');
     return true;
 }
 
@@ -125,7 +131,7 @@ $(function ()
         const reader = new FileReader();
 
         reader.onload = function () {
-            if (load_file(reader, file.name, $('#bot-a-file-name'), $('#bot-a-selected')))
+            if (load_file(reader, file.name, $('#bot-a-file-name'), $('#bot-a-selected'), $('#card-a')))
             {
                 bot_a_name = file.name;
                 bot_a_selected = true;
@@ -148,7 +154,7 @@ $(function ()
 
         reader.onload = function ()
         {
-            if (load_file(reader, file.name, $('#bot-b-file-name'), $('#bot-b-selected')))
+            if (load_file(reader, file.name, $('#bot-b-file-name'), $('#bot-b-selected'), $('#card-b')))
             {
                 bot_b_name = file.name;
                 bot_b_selected = true;
@@ -191,7 +197,7 @@ $(function ()
 
                         // When the FileReader finishes reading
                         reader.onload = function (event) {
-                            if (load_file(reader, bot_name, $('#bot-a-file-name'), $('#bot-a-selected')))
+                            if (load_file(reader, bot_name, $('#bot-a-file-name'), $('#bot-a-selected'), $('#card-a')))
                             {
                                 bot_a_name = bot_name;
                                 bot_a_selected = true;
@@ -220,7 +226,7 @@ $(function ()
 
                         // When the FileReader finishes reading
                         reader.onload = function (event) {
-                            if (load_file(reader, bot_name, $('#bot-b-file-name'), $('#bot-b-selected')))
+                            if (load_file(reader, bot_name, $('#bot-b-file-name'), $('#bot-b-selected'), $('#card-b')))
                             {
                                 bot_b_name = bot_name;
                                 bot_b_selected = true;
@@ -248,7 +254,7 @@ window.addEventListener('message', (event) => {
     const reader = new FileReader();
 
     reader.onload = function (event) {
-        if (load_file(reader, "devbot", $('#bot-a-file-name'), $('#bot-a-selected')))
+        if (load_file(reader, "devbot", $('#bot-a-file-name'), $('#bot-a-selected'), $('#card-a'), 'Loaded from IDE!'))
         {
             bot_a_name = "devbot";
             bot_a_selected = true;
