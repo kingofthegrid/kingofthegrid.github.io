@@ -62,15 +62,37 @@
             color: #9CD9F0 !important;
         }
 
+        #file-list {
+            width: 150px;
+            height: 0;
+            position: absolute;
+        }
+
+        .file {
+            border-radius: 0;
+            height: 2em;
+            padding: 0;
+        }
+
+        .file-active
+        {
+            border: 1px solid #ffffff;
+            z-index: 100;
+        }
+
     </style>
 </head>
 <body>
+    <div class="file-list" id="file-list">
+        <div class="btn-group-vertical pl-3 pt-3" style="width: 100%" id="file-list-buttons">
 
+        </div>
+    </div>
     <div class="d-flex flex-column vh-100">
         <!-- Editor Container -->
         <div class="flex-grow-1 m-3">
             <!-- Your editor content here -->
-            <div id="editor-container"></div>
+            <div id="editor-container" style="padding-left: 150px;"></div>
         </div>
 
         <!-- Terminal Window -->

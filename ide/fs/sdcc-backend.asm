@@ -69,11 +69,13 @@ _bot_move_right:
 _bot_get_x:
     ld a, #104
     .db 0xED, 0xFE
+    ld a, l
     ret
 
 _bot_get_y:
     ld a, #105
     .db 0xED, 0xFE
+    ld a, l
     ret
 
 _bot_get_me:
