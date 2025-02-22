@@ -29,61 +29,69 @@ function check_trigger_game()
     $('#bots-selector').hide();
     $('#game-header').hide();
     $('#game-panel').show();
+    $('#game-panel-body').hide();
+
+    $('#systme-log').append('<span class="text-info"><i class="bi bi-gear"></i> Simulating game, please stand by...</span><br/>');
 
     const seed = Number($('#seed').val());
 
-    var result;
+    setTimeout(function()
+    {
+        var result;
 
-    try
-    {
-        // Example: Call a C++ function to process the file
-        result = KOTG.ccall("test_programs", "number", ["string", "string", "number"],
-            [bot_a_name, bot_b_name, seed]);
-    }
-    catch ({ name, message })
-    {
-        $('#systme-log').append('<span class="text-danger">' + message + '</span><br/>');
-        $('#game-panel-body').hide();
-        return;
-    }
-
-    if (result >= 0)
-    {
-        if (result === 0)
+        try
         {
-            $('#game-panel-title').html('<span class="text-info"><i class="bi bi-exclamation-circle-fill"></i> It\'s a draw!</span>');
+            // Example: Call a C++ function to process the file
+            result = KOTG.ccall("test_programs", "number", ["string", "string", "number"],
+                [bot_a_name, bot_b_name, seed]);
         }
-        else if (result === 1)
+        catch ({ name, message })
         {
-            $('#game-panel-title').html('<span class="text-success"><i class="bi bi-exclamation-circle-fill"></i> First bot (' + bot_a_name + ') won!</span>');
-        }
-        else if (result === 2)
-        {
-            $('#game-panel-title').html('<span class="text-success"><i class="bi bi-exclamation-circle-fill"></i> Second bot (' + bot_b_name + ') won!</span>');
+            $('#systme-log').append('<span class="text-danger">' + message + '</span><br/>');
+            $('#game-panel-body').hide();
+            return;
         }
 
-        // Retrieve processed file
-        const outputData = FS.readFile("/recording.txt");
+        $('#game-panel-body').show();
 
-        var decoder = new TextDecoder('utf8');
-        var b64encoded = btoa(unescape(encodeURIComponent(decoder.decode(outputData))));
-
-        const recordingDataUri = `data:application/json;base64,${b64encoded}`;
-
-        $('#asciinema-player').html('');
-
-        // Initialize the Asciinema player
-        AsciinemaPlayer.create(
-            recordingDataUri,
-            $('#asciinema-player')[0],
+        if (result >= 0)
+        {
+            if (result === 0)
             {
-                autoplay: true,
-                loop: false,
-                theme: "asciinema",
-                fit: "width"
+                $('#game-panel-title').html('<span class="text-info"><i class="bi bi-exclamation-circle-fill"></i> It\'s a draw!</span>');
             }
-        );
-    }
+            else if (result === 1)
+            {
+                $('#game-panel-title').html('<span class="text-success"><i class="bi bi-exclamation-circle-fill"></i> First bot (' + bot_a_name + ') won!</span>');
+            }
+            else if (result === 2)
+            {
+                $('#game-panel-title').html('<span class="text-success"><i class="bi bi-exclamation-circle-fill"></i> Second bot (' + bot_b_name + ') won!</span>');
+            }
+
+            // Retrieve processed file
+            const outputData = FS.readFile("/recording.txt");
+
+            var decoder = new TextDecoder('utf8');
+            var b64encoded = btoa(unescape(encodeURIComponent(decoder.decode(outputData))));
+
+            const recordingDataUri = `data:application/json;base64,${b64encoded}`;
+
+            $('#asciinema-player').html('');
+
+            // Initialize the Asciinema player
+            AsciinemaPlayer.create(
+                recordingDataUri,
+                $('#asciinema-player')[0],
+                {
+                    autoplay: true,
+                    loop: false,
+                    theme: "asciinema",
+                    fit: "width"
+                }
+            );
+        }
+    }, 500);
 }
 
 function load_file(reader, file_name, select_node, label_node, card_node, custom_note)
